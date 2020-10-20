@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:include="include/admin/adminHeader::html('编辑属性')"></head>
+<body>
+
+	<script>
+        var data4Vue = {
+        	    uri:'properties',
+        	    bean: '',
+        	    category:'',
+        	    	listURL:'admin_property_list'
+        	};
+        $(function(){
+        	var vue = new Vue({
+        	    el: '#workingArea',
+        	    data: data4Vue,
+        	    mounted:function(){
+        	    	this.get();
+        	       
+        	    },
+        	    methods: {
+        	    	get:function(){
+                        var id = getUrlParms("id");
+                        var url = this.uri+"/"+id;
+                        axios.get(url).then(function(response) {
+                            vue.bean = response.data;
+                            vue.category = vue.bean.category;
+                        })
+                    },
+                    update:function () {
+                        
+                        var url = this.uri;
+                        axios.put(url,vue.bean).then(function(response){
+                            location.href=vue.listURL+"?cid="+vue.category.id;
+                        });
+                    }
+                    
+        	    }
+        	})
+        })        	
+ 
+        </script>
+	<div id="workingArea">
+	<div><a href="admin_category_list">所有分类</a></div>
+	<div><a :href="'admin_property_list?cid='+category.id">{{category.name}}</a></div>
+		<div>编辑属性</div>
+		<table>
+		<tr>
+		<td>属性名称</td>
+		<td><input v-model.trim="bean.name"></td>
+				</tr>
+		<tr>
+		<td colspan="2" align="center">
+		
+		<a href="#nowhere"  @click="update">提交</a></td>
+		</tr>
+		</table>
+	</div>
+
+
+</body>
+</html>
